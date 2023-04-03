@@ -1,4 +1,4 @@
-package com.markobozic.parkinglots.mappers;
+package com.markobozic.parkinglots.repository.custom;
 
 import com.markobozic.parkinglots.controller.dto.ParkingLotType;
 import com.markobozic.parkinglots.repository.entity.ParkingLotEntity;
@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class ParkingLotsRowMapper implements RowMapper<ParkingLotEntity> {
+public class ParkingLotsRow implements RowMapper<ParkingLotEntity> {
 
     @Override
     public ParkingLotEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -18,7 +18,8 @@ public class ParkingLotsRowMapper implements RowMapper<ParkingLotEntity> {
         entity.setLongitude(Double.parseDouble(rs.getString("longitude")));
         entity.setName(rs.getString("name"));
         entity.setYear(Integer.parseInt(rs.getString("year")));
-        entity.setType(ParkingLotType.fromFullName(rs.getString("type")));
+        entity.setType(ParkingLotType.fromEnum(rs.getString("type")));
+        entity.setDistance(Double.parseDouble(rs.getString("distance")));
 
         return entity;
     }

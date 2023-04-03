@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.markobozic.parkinglots.controller.dto.ParkingLotType;
 import lombok.Getter;
@@ -47,4 +48,7 @@ public class ParkingLotEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private ParkingLotType type;
+
+    @Transient
+    private double distance;
 }

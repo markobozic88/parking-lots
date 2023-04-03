@@ -1,7 +1,7 @@
 package com.markobozic.parkinglots.service;
 
 import com.markobozic.parkinglots.repository.entity.ParkingLotEntity;
-import com.markobozic.parkinglots.repository.ParkingLotRepository;
+import com.markobozic.parkinglots.repository.LoaderRepository;
 import com.markobozic.parkinglots.mappers.MapperUtils;
 import com.markobozic.parkinglots.service.model.ParkingLotDetails;
 import com.opencsv.CSVReader;
@@ -33,17 +33,17 @@ public class LoaderServiceImpl implements LoaderService {
     private static final Logger LOG = LoggerFactory.getLogger(LoaderServiceImpl.class);
 
     private final NamedParameterJdbcOperations jdbcTemplate;
-    private final ParkingLotRepository parkingLotRepository;
+    private final LoaderRepository loaderRepository;
 
-    public LoaderServiceImpl(final NamedParameterJdbcOperations jdbcTemplate, final ParkingLotRepository parkingLotRepository) {
+    public LoaderServiceImpl(final NamedParameterJdbcOperations jdbcTemplate, final LoaderRepository loaderRepository) {
         this.jdbcTemplate = jdbcTemplate;
-        this.parkingLotRepository = parkingLotRepository;
+        this.loaderRepository = loaderRepository;
     }
 
     @Override
     @Transactional
     public String addRecords() {
-        List<UUID> recordsExists = parkingLotRepository.findOne(jdbcTemplate);
+        List<UUID> recordsExists = loaderRepository.findOne(jdbcTemplate);
         if (!recordsExists.isEmpty()) {
             return "Records are already stored in database.";
         }
@@ -54,7 +54,7 @@ public class LoaderServiceImpl implements LoaderService {
         }
 
         List<ParkingLotEntity> lotEntities = parkingLots.stream().map(MapperUtils::fromModelToEntity).collect(Collectors.toList());
-        parkingLotRepository.saveAll(lotEntities);
+        loaderRepository.saveAll(lotEntities);
 
         return "SUCCESS! Added " + lotEntities.size() + " records in database.";
     }
@@ -69,7 +69,7 @@ public class LoaderServiceImpl implements LoaderService {
             csvReader = new CSVReaderBuilder(reader).withSkipLines(1).build();
 
         } catch (IOException e) {
-            LOG.error(format("Something went wrong in reading CSV file! Error: %s", e.getMessage()));
+            LOG.error("Something went wrong in reading CSV file! Error: {}", e.getMessage());
             return Collections.emptyList();
         }
 
@@ -80,7 +80,7 @@ public class LoaderServiceImpl implements LoaderService {
                 parkingLots.add(new ParkingLotDetails(nextLine));
             }
         } catch (IOException | CsvValidationException e) {
-            LOG.error(format("Something went wrong in reading line from CSV file. Error: %s", e.getMessage()));
+            LOG.error("Something went wrong in reading line from CSV file. Error: {}", e.getMessage());
             return Collections.emptyList();
         }
 

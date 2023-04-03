@@ -24,7 +24,7 @@ public class ParkingLotController {
     @PostMapping("/get-closest-parking")
     public ParkingLotDto getClosestParking(@RequestParam("latitude") final String latitude,
                                            @RequestParam("longitude") final String longitude) {
-        return null;
+        return parkingLotService.findClosestParking(latitude, longitude);
     }
 
     @ResponseStatus(HttpStatus.OK)

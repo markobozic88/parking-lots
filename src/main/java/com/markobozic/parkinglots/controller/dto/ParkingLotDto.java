@@ -11,6 +11,8 @@ public class ParkingLotDto {
 
     private int year;
 
-    private ParkingLotType type;
+    private String type;
+
+    private double distance;
 
 }
