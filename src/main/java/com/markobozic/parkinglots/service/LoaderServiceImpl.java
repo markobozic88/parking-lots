@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,7 +47,7 @@ public class LoaderServiceImpl implements LoaderService {
             return "Records are already stored in database.";
         }
 
-        List<ParkingLotDetails> parkingLots = getParkingLotsFromCVS();
+        List<ParkingLotDetails> parkingLots = getParkingLotsFromSoredCVS();
         if (parkingLots.isEmpty()) {
             return "FAIL";
         }
@@ -57,7 +58,35 @@ public class LoaderServiceImpl implements LoaderService {
         return "SUCCESS! Added " + lotEntities.size() + " records in database.";
     }
 
-    private List<ParkingLotDetails> getParkingLotsFromCVS() {
+    @Override
+    public String addRecordsUploadCVS(MultipartFile file, int skipLines) {
+        List<UUID> recordsExists = loaderRepository.findOne(jdbcTemplate);
+        if (!recordsExists.isEmpty()) {
+            return "There is some records in database. Remove them first then try to upload CSV again.";
+        }
+
+        List<ParkingLotDetails> parkingLots = getParkingLotsFromUploadedCVS(file, skipLines);
+        if (parkingLots.isEmpty()) {
+            return "FAIL";
+        }
+
+        List<ParkingLotEntity> lotEntities = parkingLots.stream().map(MapperUtils::fromModelToEntity).collect(Collectors.toList());
+        loaderRepository.saveAll(lotEntities);
+
+        return "SUCCESS! Added " + lotEntities.size() + " records in database.";
+    }
+
+    @Override
+    public String deleteAllRecords() {
+        try {
+            loaderRepository.deleteAll();
+            return "SUCCESS!";
+        } catch (RuntimeException re) {
+            return "FAIL!";
+        }
+    }
+
+    private List<ParkingLotDetails> getParkingLotsFromSoredCVS() {
         CSVReader csvReader;
         try {
             File initialFile = new File("src/main/resources/la-parking-lot.csv");
@@ -71,6 +100,23 @@ public class LoaderServiceImpl implements LoaderService {
             return Collections.emptyList();
         }
 
+        return getParkingLotDetails(csvReader);
+    }
+
+    private List<ParkingLotDetails> getParkingLotsFromUploadedCVS(MultipartFile file, int skipLines) {
+        CSVReader csvReader;
+        try {
+            Reader reader = new InputStreamReader(file.getInputStream());
+            csvReader = new CSVReaderBuilder(reader).withSkipLines(skipLines).build();
+        } catch (IOException e) {
+            LOG.error("Something went wrong in reading CSV file! Error: {}", e.getMessage());
+            return Collections.emptyList();
+        }
+
+        return getParkingLotDetails(csvReader);
+    }
+
+    private List<ParkingLotDetails> getParkingLotDetails(CSVReader csvReader) {
         List<ParkingLotDetails> parkingLots = new ArrayList<>();
         try {
             String[] nextLine;

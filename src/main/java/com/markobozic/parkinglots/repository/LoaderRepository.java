@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.UUID;
 
+import static java.lang.String.format;
+
 @Repository
 public interface LoaderRepository extends JpaRepository<ParkingLotEntity, UUID> {
 
@@ -20,7 +22,7 @@ public interface LoaderRepository extends JpaRepository<ParkingLotEntity, UUID> 
         try {
             return jdbcTemplate.query(query.toString(), new MapSqlParameterSource(), new UUIDRow());
         } catch (DataAccessException e) {
-            throw new IllegalStateException(e);
+            throw new IllegalStateException(format("findOne: Call to DB failed! Error: %s", e.getMessage()));
         }
 
     }
