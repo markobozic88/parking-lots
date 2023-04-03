@@ -12,9 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-import static com.markobozic.parkinglots.utils.Consts.ER;
-import static com.markobozic.parkinglots.utils.Consts.LATITUDE;
-import static com.markobozic.parkinglots.utils.Consts.LONGITUDE;
+import static com.markobozic.parkinglots.utils.Consts.*;
 import static java.lang.String.format;
 
 @Component
@@ -46,7 +44,7 @@ public class ParkingLotsRepositoryImpl implements ParkingLotsRepository {
                 .append("order by distance ")
                 .append("limit 1");
 
-        LOG.info("query: {}", query);
+        LOG.info("getClosestParking::query: {}", query);
 
         try {
             List<ParkingLotEntity> parkingLot = jdbcTemplate.query(query.toString(), parameters, new ParkingLotsRow());
@@ -57,6 +55,30 @@ public class ParkingLotsRepositoryImpl implements ParkingLotsRepository {
             }
         } catch (final DataAccessException e) {
             throw new IllegalStateException(format("getClosestParking: Call to DB failed! Error: %s", e.getMessage()));
+        }
+    }
+
+    @Override
+    public Integer getParkingScore(final double latitude, final double longitude) {
+        final double radius = 1.0; // in 1km radius
+        final MapSqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue(LATITUDE, latitude)
+                .addValue(LONGITUDE, longitude)
+                .addValue(RADIUS, radius);
+
+        StringBuilder query = new StringBuilder()
+                .append("select count(*) from parking_lots p where ")
+                .append("(:").append(RADIUS).append(" * 1000 * acos(cos(radians(:").append(LATITUDE).append(")) * ")
+                .append("cos(radians(p.latitude)) * cos(radians(p.longitude) - ")
+                .append("radians(:").append(LONGITUDE).append(")) + sin(radians(:").append(LATITUDE).append(")) ")
+                .append("* sin(radians(p.latitude)))) <= :").append(RADIUS);
+
+        LOG.info("getParkingScore::query: {}", query);
+
+        try {
+            return jdbcTemplate.queryForObject(query.toString(), parameters, Integer.class);
+        } catch (final DataAccessException e) {
+            throw new IllegalStateException(format("getParkingScore: Call to DB failed! Error: %s", e.getMessage()));
         }
     }
 }

@@ -8,5 +8,6 @@ public class Consts {
     public static final String LATITUDE = "latitude";
     public static final String LONGITUDE = "longitude";
     public static final String ER = "earthRadius";
+    public static final String RADIUS = "radius";
 
 }

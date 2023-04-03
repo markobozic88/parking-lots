@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJdbcRepositories(basePackages = { "com.markobozic.parkinglots.repository" })
+@EnableJdbcRepositories(basePackages = {"com.markobozic.parkinglots.repository"})
 public class RepositoryConfig {
 
     @Value("${spring.datasource.url}")

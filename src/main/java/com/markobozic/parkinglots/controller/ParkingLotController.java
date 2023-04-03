@@ -29,7 +29,8 @@ public class ParkingLotController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/parking-score")
-    public int getParkingScore() {
-        return parkingLotService.getParkingScore();
+    public Integer getParkingScore(@RequestParam("latitude") final String latitude,
+                                   @RequestParam("longitude") final String longitude) {
+        return parkingLotService.getParkingScore(latitude, longitude);
     }
 }

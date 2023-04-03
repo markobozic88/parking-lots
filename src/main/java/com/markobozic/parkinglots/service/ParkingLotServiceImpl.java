@@ -7,6 +7,9 @@ import com.markobozic.parkinglots.repository.entity.ParkingLotEntity;
 
 import java.util.Optional;
 
+import static com.markobozic.parkinglots.utils.Validation.validateLatitude;
+import static com.markobozic.parkinglots.utils.Validation.validateLongitude;
+
 public class ParkingLotServiceImpl implements ParkingLotService {
 
     private final ParkingLotsRepository parkingLotsRepository;
@@ -25,27 +28,15 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     }
 
     @Override
-    public int getParkingScore() {
-        return 0;
-    }
+    public Integer getParkingScore(final String latitude, final String longitude) {
+        final double lat = validateLatitude(latitude);
+        final double lon = validateLongitude(longitude);
 
-    private double validateLatitude(final String latitude) {
-        try {
-            return Double.parseDouble(latitude);
-        } catch (NullPointerException npe) {
-            throw new NullPointerException("latitude can not be null!");
-        } catch (NumberFormatException nfe) {
-            throw new NumberFormatException("latitude does not contain a parsable double!");
+        Integer score = parkingLotsRepository.getParkingScore(lat, lon);
+        if (score == null) {
+            return 0;
         }
-    }
 
-    private double validateLongitude(final String longitude) {
-        try {
-            return Double.parseDouble(longitude);
-        } catch (NullPointerException npe) {
-            throw new NullPointerException("longitude can not be null!");
-        } catch (NumberFormatException nfe) {
-            throw new NumberFormatException("longitude does not contain a parsable double!");
-        }
+        return score;
     }
 }
