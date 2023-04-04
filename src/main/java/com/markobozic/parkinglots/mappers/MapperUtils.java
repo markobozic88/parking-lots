@@ -24,9 +24,9 @@ public class MapperUtils {
 
     public static ParkingLotDto fromEntityToDto(ParkingLotEntity entity) {
         ParkingLotDto dto = new ParkingLotDto();
-        dto.setLocationDto(new LocationDto());
-        dto.getLocationDto().setLatitude(entity.getLatitude());
-        dto.getLocationDto().setLongitude(entity.getLongitude());
+        dto.setLocation(new LocationDto());
+        dto.getLocation().setLatitude(entity.getLatitude());
+        dto.getLocation().setLongitude(entity.getLongitude());
         dto.setName(entity.getName());
         dto.setYear(entity.getYear());
         dto.setType(entity.getType() != null ? entity.getType().getEnumName() : null);
