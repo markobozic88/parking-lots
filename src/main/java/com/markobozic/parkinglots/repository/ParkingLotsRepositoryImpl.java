@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.markobozic.parkinglots.utils.Consts.*;
@@ -59,36 +60,27 @@ public class ParkingLotsRepositoryImpl implements ParkingLotsRepository {
     }
 
     @Override
-    public Integer getParkingScore(final double latitude, final double longitude) {
-        final double radius = 1.0; // in 1km radius
+    public int getParkingScore(final double latitude, final double longitude, final double radius) {
         final MapSqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue(LATITUDE, latitude)
                 .addValue(LONGITUDE, longitude)
+                .addValue(ER, EARTH_RADIUS)
                 .addValue(RADIUS, radius);
 
         StringBuilder query = new StringBuilder()
                 .append("select count(*) from parking_lots p where ")
-                .append("(:").append(RADIUS).append(" * 1000 * acos(cos(radians(:").append(LATITUDE).append(")) * ")
-                .append("cos(radians(p.latitude)) * cos(radians(p.longitude) - ")
-                .append("radians(:").append(LONGITUDE).append(")) + sin(radians(:").append(LATITUDE).append(")) ")
-                .append("* sin(radians(p.latitude)))) <= :").append(RADIUS);
+                .append("(acos(sin(radians(:").append(LATITUDE).append(")) * sin(radians(p.latitude)) + ")
+                .append("cos(radians(:").append(LATITUDE).append(")) * cos(radians(p.latitude)) * ")
+                .append("cos(radians(p.longitude) - radians(:").append(LONGITUDE).append(")))) * ")
+                .append(":").append(ER).append(" <= :").append(RADIUS);
 
         LOG.info("getParkingScore::query: {}", query);
 
         try {
-            return jdbcTemplate.queryForObject(query.toString(), parameters, Integer.class);
+            Integer numParking = jdbcTemplate.queryForObject(query.toString(), parameters, Integer.class);
+            return Objects.requireNonNullElse(numParking, 0);
         } catch (final DataAccessException e) {
             throw new IllegalStateException(format("getParkingScore: Call to DB failed! Error: %s", e.getMessage()));
         }
     }
 }
-
-
-
-
-
-
-
-
-
-

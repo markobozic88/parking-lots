@@ -9,9 +9,9 @@ public class Validation {
         try {
             return Double.parseDouble(latitude);
         } catch (NullPointerException npe) {
-            throw new NullPointerException("latitude can not be null!");
+            throw new NullPointerException("Latitude can not be null!");
         } catch (NumberFormatException nfe) {
-            throw new NumberFormatException("latitude does not contain a parsable double!");
+            throw new NumberFormatException("Latitude does not contain a parsable double!");
         }
     }
 
@@ -19,9 +19,19 @@ public class Validation {
         try {
             return Double.parseDouble(longitude);
         } catch (NullPointerException npe) {
-            throw new NullPointerException("longitude can not be null!");
+            throw new NullPointerException("Longitude can not be null!");
         } catch (NumberFormatException nfe) {
-            throw new NumberFormatException("longitude does not contain a parsable double!");
+            throw new NumberFormatException("Longitude does not contain a parsable double!");
+        }
+    }
+
+    public static double validateRadius(final String radius) {
+        try {
+            return Double.parseDouble(radius);
+        } catch (NullPointerException npe) {
+            throw new NullPointerException("Radius can not be null!");
+        } catch (NumberFormatException nfe) {
+            throw new NumberFormatException("Radius does not contain a parsable double!");
         }
     }
 }

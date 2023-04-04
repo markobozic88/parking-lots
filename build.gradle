@@ -35,6 +35,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
     // flyway migration
     implementation 'org.flywaydb:flyway-core:9.5.1'
 

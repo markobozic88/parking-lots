@@ -4,11 +4,13 @@ import com.markobozic.parkinglots.controller.dto.ParkingLotDto;
 import com.markobozic.parkinglots.mappers.MapperUtils;
 import com.markobozic.parkinglots.repository.ParkingLotsRepository;
 import com.markobozic.parkinglots.repository.entity.ParkingLotEntity;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
 
 import static com.markobozic.parkinglots.utils.Validation.validateLatitude;
 import static com.markobozic.parkinglots.utils.Validation.validateLongitude;
+import static com.markobozic.parkinglots.utils.Validation.validateRadius;
 
 public class ParkingLotServiceImpl implements ParkingLotService {
 
@@ -19,7 +21,7 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     }
 
     @Override
-    public ParkingLotDto findClosestParking(final String latitude, final String longitude) {
+    public ParkingLotDto findClosestParking(String latitude, String longitude) {
         final double lat = validateLatitude(latitude);
         final double lon = validateLongitude(longitude);
 
@@ -28,15 +30,14 @@ public class ParkingLotServiceImpl implements ParkingLotService {
     }
 
     @Override
-    public Integer getParkingScore(final String latitude, final String longitude) {
+    public Integer getParkingScore(String latitude, String longitude, String radius) {
+        if (StringUtils.isBlank(radius)) {
+            // by default 1.0
+            radius = "1.0";
+        }
         final double lat = validateLatitude(latitude);
         final double lon = validateLongitude(longitude);
-
-        Integer score = parkingLotsRepository.getParkingScore(lat, lon);
-        if (score == null) {
-            return 0;
-        }
-
-        return score;
+        final double rad = validateRadius(radius);
+        return parkingLotsRepository.getParkingScore(lat, lon, rad);
     }
 }

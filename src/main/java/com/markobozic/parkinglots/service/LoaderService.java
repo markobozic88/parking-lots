@@ -5,7 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 public interface LoaderService {
     String addRecords();
 
-    String addRecordsUploadCVS(MultipartFile file, int skipLines);
+    String addRecordsUploadCVS(final MultipartFile file);
 
     String deleteAllRecords();
 }

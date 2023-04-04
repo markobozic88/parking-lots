@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface ParkingLotsRepository {
     Optional<ParkingLotEntity> getClosestParking(final double latitude, final double longitude);
 
-    Integer getParkingScore(final double latitude, final double longitude);
+    int getParkingScore(final double latitude, final double longitude, final double radius);
 }

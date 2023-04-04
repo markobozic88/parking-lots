@@ -11,16 +11,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
-import static com.markobozic.parkinglots.utils.ConstsTest.LAT;
-import static com.markobozic.parkinglots.utils.ConstsTest.LAT_BAD;
-import static com.markobozic.parkinglots.utils.ConstsTest.LON;
-import static com.markobozic.parkinglots.utils.ConstsTest.LON_BAD;
+import static com.markobozic.parkinglots.utils.ConstsTest.*;
 import static com.markobozic.parkinglots.utils.DataCreator.getParkingLotEntity;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {ParkingLotService.class})
@@ -72,19 +67,24 @@ class ParkingLotServiceTest {
     }
 
     @Test
-    void testGetParkingScore_returnZero_OK() {
-        when(parkingLotsRepository.getParkingScore(anyDouble(), anyDouble())).thenReturn(null);
-
-        Integer score = parkingLotService.getParkingScore(LAT, LON);
-        assertEquals(0, score);
-    }
-
-    @Test
     void testGetParkingScore_returnRandomScore_OK() {
-        when(parkingLotsRepository.getParkingScore(anyDouble(), anyDouble())).thenReturn(250);
+        when(parkingLotsRepository.getParkingScore(anyDouble(), anyDouble(), anyDouble())).thenReturn(250);
 
-        Integer score = parkingLotService.getParkingScore(LAT, LON);
+        Integer score = parkingLotService.getParkingScore(LAT, LON, RAD);
         assertEquals(250, score);
     }
 
+    @Test
+    void testGetParkingScore_radiusNull_OK() {
+        when(parkingLotsRepository.getParkingScore(anyDouble(), anyDouble(), anyDouble())).thenReturn(250);
+
+        Integer score = parkingLotService.getParkingScore(LAT, LON, null);
+        assertEquals(250, score);
+    }
+
+    @Test
+    void testGetParkingScore_badFormatRadius_NumberFormatException() {
+        assertThrows(NumberFormatException.class,
+                () -> parkingLotService.getParkingScore(LAT, LON, RAD_BAD));
+    }
 }

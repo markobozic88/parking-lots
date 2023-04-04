@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,9 +29,8 @@ public class LoaderController {
 
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/add-upload")
-    public String addRecordsUploadCVS(@RequestPart("file") final MultipartFile file,
-                                      @RequestParam(value = "skipLines", required = false) final Integer skipLines) {
-        return loaderService.addRecordsUploadCVS(file, skipLines);
+    public String addRecordsUploadCVS(@RequestPart("file") final MultipartFile file) {
+        return loaderService.addRecordsUploadCVS(file);
     }
 
     @ResponseStatus(HttpStatus.OK)

@@ -10,4 +10,10 @@ public class Consts {
     public static final String ER = "earthRadius";
     public static final String RADIUS = "radius";
 
+    public static final String SUCCESS = "SUCCESS!";
+    public static final String FAIL = "FAIL!";
+    public static final String RECORDS_STORED = "There is some records in database. Remove them first.";
+
+
+
 }
