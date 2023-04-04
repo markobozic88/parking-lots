@@ -11,7 +11,7 @@ public class DataCreator {
     public static ParkingLotEntity getParkingLotEntity() {
         ParkingLotEntity lotEntity = new ParkingLotEntity();
         lotEntity.setLatitude(34.1012278);
-        lotEntity.setLatitude(-118.3408739);
+        lotEntity.setLongitude(-118.3408739);
         lotEntity.setName("testName");
         lotEntity.setYear(2023);
         lotEntity.setType(ParkingLotType.PARKING);
