@@ -24,6 +24,11 @@ group = 'com.markobozic'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = JavaVersion.VERSION_17
 
+tasks.named("bootJar") {
+    archiveClassifier = 'boot'
+    mainClass = 'com.markobozic.parkinglots.ParkingLotsApplication'
+}
+
 repositories {
     mavenLocal()
     mavenCentral()
