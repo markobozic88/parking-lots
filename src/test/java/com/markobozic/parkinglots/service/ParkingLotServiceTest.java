@@ -61,7 +61,7 @@ class ParkingLotServiceTest {
         when(parkingLotsRepository.getClosestParking(anyDouble(), anyDouble())).thenReturn(Optional.of(entity));
 
         ParkingLotDto dto = parkingLotService.findClosestParking(LAT, LON);
-        assertEquals(dto.getLocationDto().getLatitude(), entity.getLatitude());
+        assertEquals(dto.getLocation().getLatitude(), entity.getLatitude());
         assertEquals(dto.getYear(), entity.getYear());
         assertEquals(ParkingLotType.fromEnumName(dto.getType()), entity.getType());
     }
